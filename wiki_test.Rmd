@@ -1,0 +1,104 @@
+---
+title: "Wikipedia History Proof of Concept"
+author: "Adam Campbell"
+date: "25/11/2020"
+output: html_document
+---
+
+The goal of this script is to download data from wikipedia on the complete edit history of an article.  Eventually I might like to turn this into a R package, but for the time being I'll keep this as a markdown file for a proof of concept.
+
+To do this work I made use [Wikipedia's API Tool](https://www.mediawiki.org/wiki/API:Revisions#Example_2:_Get_last_five_revisions_of_a_page_filtered_by_date_and_user) and [Dataquest's API tool](https://www.dataquest.io/blog/r-api-tutorial/)
+
+First load the libraries for doing the query.
+```{r message=FALSE, load-libraries}
+library(httr)
+library(jsonlite)
+library(tidyverse)
+library(lubridate)
+```
+
+Here are two functions, `get_500_recent` will get the 500 (Wikipedia's limit) of most recent edits on the page,  `get_500_recent` get's the full edit history.   
+```{r}
+# get 500 results
+
+get_500_recent <- function(title, start_date = "start"){
+  base_list = list(
+    action = "query", 
+    prop = "revisions",
+    rvprop = "timestamp",
+    rvlimit = "500",
+    rvslots = "main",
+    formatversion = "2",
+    rvdir = "newer",
+    format = "json"
+  )
+  
+  # make list
+  if (start_date == "start") {
+    supp_list = list(
+      titles = title
+    )  
+  } else {
+    supp_list = list(
+      titles = title,
+      rvstart = start_date
+    )
+  }
+
+  query_list = c(base_list, supp_list)
+  
+  res = GET(
+    "http://en.wikipedia.org/w/api.php", 
+    query = query_list
+    )
+
+  data = fromJSON(rawToChar(res$content))
+  
+  dom <- data$query$pages$revisions[[1]]
+  
+  return(dom)
+}
+
+# get full edit history
+
+get_edit_history <- function(title){
+  
+  first_data <- get_500_recent(title)
+  
+  if (nrow(first_data) < 500 ) {
+    return(first_data)
+  } 
+  
+  fetched_data <- first_data
+  data_out <- fetched_data
+  
+  while (nrow(fetched_data) == 500 ){
+    data_out <- data_out %>% filter(row_number() <= n()-1)
+    date_start <- as.character(tail(fetched_data, n=1))
+    fetched_data <- get_500_recent(title, date_start)
+    data_out <- rbind(data_out, fetched_data)
+  }
+  return(data_out)
+}
+```
+
+Let's do a test for "Coronavirus disease 2019"
+```{r}
+title = "Coronavirus_disease_2019"
+my_data <- get_edit_history(title)
+```
+
+Have to formulate the dates
+```{r}
+my_data$dates <- as_date(my_data$timestamp)
+my_data$testdatetime <- parse_date_time(my_data$timestamp,"y m d HMS")
+my_data$testmonth <- month(my_data$timestamp)
+```
+
+And do a simple plot of the results
+```{r}
+ggplot(my_data) + aes(x = lubridate::floor_date(dates, "month")) + 
+  geom_bar() +
+  theme_minimal()
+```
+
