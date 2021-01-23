@@ -3,3 +3,6 @@
 .RData
 .Ruserdata
 test_code.R
+.Rproj
+Wikipedia_editing_history.Rproj
+*.html
