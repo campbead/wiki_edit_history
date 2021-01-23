@@ -104,3 +104,16 @@ ggplot(my_data) + aes(x = lubridate::floor_date(dates, "month")) +
   theme_minimal()
 ```
 
+This bar graph is informative but what I want is for each day have a count of the edits and another plot on top that is a running average.
+
+```{r}
+library(zoo)
+
+ggplot(my_data %>% count(dates), aes(x = dates, n)) +
+  geom_point(alpha = 0.1, color='darkblue') +
+  geom_line(aes(y=rollmean(n, 14, na.pad=TRUE)), color="purple", size =1.5) +
+  labs(y = "edit count") +
+  ylim(0,100) +
+  theme_minimal() + 
+  theme(axis.title.x = element_blank())
+```
