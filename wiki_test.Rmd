@@ -9,6 +9,8 @@ The goal of this script is to download data from wikipedia on the complete edit 
 
 To do this work I made use [Wikipedia's API Tool](https://www.mediawiki.org/wiki/API:Revisions#Example_2:_Get_last_five_revisions_of_a_page_filtered_by_date_and_user) and [Dataquest's API tool](https://www.dataquest.io/blog/r-api-tutorial/)
 
+If I ever do make this into a package, I'll try to follow [these interesting instruction ](https://tinyheero.github.io/jekyll/update/2015/07/26/making-your-first-R-package.html)
+
 First load the libraries for doing the query.
 ```{r message=FALSE, load-libraries}
 library(httr)
