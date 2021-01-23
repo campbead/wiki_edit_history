@@ -117,3 +117,39 @@ ggplot(my_data %>% count(dates), aes(x = dates, n)) +
   theme_minimal() + 
   theme(axis.title.x = element_blank())
 ```
+
+So I'm pretty happy with that.  I want to now explore 2020 VP picks.
+
+```{r}
+Harris_data <- get_edit_history("Kamala_Harris")
+Rice_data <- get_edit_history("Susan_Rice")
+Warren_data <- get_edit_history("Elizabeth_Warren")
+Whitmer_data <- get_edit_history("Gretchen_Whitmer")
+Duckworth_data <- get_edit_history("Tammy_Duckworth")
+Abrams_data <- get_edit_history("Stacey_Abrams")
+```
+
+Make the dates nice
+```{r}
+Harris_data$dates <- as_date(Harris_data$timestamp)
+Rice_data$dates <- as_date(Rice_data$timestamp)
+Warren_data$dates <- as_date(Warren_data$timestamp)
+Whitmer_data$dates <- as_date(Whitmer_data$timestamp)
+Duckworth_data$dates <- as_date(Duckworth_data$timestamp)
+Abrams_data$dates <- as_date(Abrams_data$timestamp)
+```
+
+
+
+```{r}
+ggplot(Harris_data %>% count(dates), aes(x = dates, n)) +
+  geom_point(alpha = 0.1, color='darkblue') +
+  geom_line(aes(y=rollmean(n, 14, na.pad=TRUE)), color="purple", size =1.5) +
+  labs(y = "edit count") +
+  lims(x = as.Date(c("2016-01-01", "2020-01-01")), y = c(0,50))+
+  theme_minimal() + 
+  theme(axis.title.x = element_blank())
+
+
+```
+
