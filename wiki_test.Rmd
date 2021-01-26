@@ -153,3 +153,52 @@ ggplot(Harris_data %>% count(dates), aes(x = dates, n)) +
 
 ```
 
+```{r}
+Harris_data$pick <- "Harris" 
+Rice_data$pick <- "Rice"
+Warren_data$pick <- "Warren"
+Whitmer_data$pick <- "Whitmer"
+Duckworth_data$pick <- "Duckworth"
+Abrams_data$pick <- "Abrams"
+```
+
+```{r}
+
+VP_data <- rbind(Harris_data,Rice_data,Warren_data, Whitmer_data, Duckworth_data, Abrams_data)
+```
+
+```{r}
+foo <- VP_data %>%
+  group_by(pick) %>%
+  count(dates)
+```
+
+
+
+```{r}
+library(scales)
+ggplot(foo, aes(x = dates, y = n, color = pick)) +
+  geom_vline( xintercept = keydates$keydate_dates) +
+  geom_point( alpha = 0.2) +
+  geom_line(aes(y=rollmean(n, 14, na.pad=TRUE)), size =1.2) +
+
+  labs(y = "edit count") +
+  lims(x = as.Date(c("2020-01-01", "2020-09-01")), y = c(0,60))+
+  scale_x_date(date_breaks = "months" , date_labels = "%b", limits = as.Date(c("2020-01-01", "2020-09-01"))) +
+  theme_minimal() +
+  theme(axis.title.x = element_blank())
+
+```
+
+Key dates 
+march 15 - biden promises a woman
+april 08 - Biden become presumptive nominee
+april 30 - vetting committee anounced
+aug 11 - selection of Harris
+
+```{r}
+keydate_dates <- as.Date(c("2020-03-15", "2020-04-08", "2020-04-30", "2020-08-11"))
+keydate_events <- c("biden promises a woman", "Biden become presumptive nominee", "vetting committee anounced", "selection of Harris")
+keydates <- data.frame(keydate_dates, keydate_events)
+```
+
