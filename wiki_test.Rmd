@@ -167,33 +167,32 @@ Abrams_data$pick <- "Abrams"
 VP_data <- rbind(Harris_data,Rice_data,Warren_data, Whitmer_data, Duckworth_data, Abrams_data)
 ```
 
+
+Do the initial count of dates
 ```{r}
-foo <- VP_data %>%
+VP_data_dates <- VP_data %>%
   group_by(pick) %>%
   count(dates)
 ```
 
-
-
+fill in zeros for uncounted days
 ```{r}
-library(scales)
-ggplot(foo, aes(x = dates, y = n, color = pick)) +
-  geom_vline( xintercept = keydates$keydate_dates) +
-  geom_point( alpha = 0.2) +
-  geom_line(aes(y=rollmean(n, 14, na.pad=TRUE)), size =1.2) +
+earliest_date <- min(VP_data_dates$dates)
+latest_date <- max(VP_data_dates$dates)
+date_range <- seq(earliest_date, latest_date, "days")
 
-  labs(y = "edit count") +
-  lims(x = as.Date(c("2020-01-01", "2020-09-01")), y = c(0,60))+
-  scale_x_date(date_breaks = "months" , date_labels = "%b", limits = as.Date(c("2020-01-01", "2020-09-01"))) +
-  theme_minimal() +
-  theme(axis.title.x = element_blank())
-
+VP_data_dates <- VP_data_dates %>%
+  group_by(pick) %>%
+  complete(dates = date_range) %>%
+  mutate(n = replace_na(n,0))
 ```
+
+
 
 Key dates 
 march 15 - biden promises a woman
 april 08 - Biden become presumptive nominee
-april 30 - vetting committee anounced
+april 30 - vetting committee announced
 aug 11 - selection of Harris
 
 ```{r}
@@ -202,3 +201,24 @@ keydate_events <- c("biden promises a woman", "Biden become presumptive nominee"
 keydates <- data.frame(keydate_dates, keydate_events)
 ```
 
+
+
+```{r}
+library(scales)
+ggplot(VP_data_dates, aes(x = dates, y = n, color = pick)) +
+  geom_vline( xintercept = keydates$keydate_dates, linetype = "dashed") +
+  geom_point( alpha = 0.2) +
+  geom_line(aes(y=rollmean(n, 7, na.pad=TRUE, align = "center")), size =1.2) +
+  labs(y = "edit count") +
+  lims(x = as.Date(c("2020-01-01", "2020-09-01")), y = c(0,100))+
+  scale_x_date(date_breaks = "months" , date_labels = "%b", limits = as.Date(c("2020-01-01", "2020-09-01"))) +
+  theme_minimal() +
+  theme(axis.title.x = element_blank())
+```
+
+
+Ideas
+add lables to timeline
+clean up graph
+Sum of edits
+Cummulative edits
