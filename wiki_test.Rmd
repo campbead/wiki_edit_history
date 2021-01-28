@@ -197,7 +197,7 @@ aug 11 - selection of Harris
 
 ```{r}
 keydate_dates <- as.Date(c("2020-03-15", "2020-04-08", "2020-04-30", "2020-08-11"))
-keydate_events <- c("biden promises a woman", "Biden become presumptive nominee", "vetting committee anounced", "selection of Harris")
+keydate_events <- c("Biden promises to nominate a woman", "Biden become presumptive nominee", "VP Vetting committee anounced", "Harris annouced as VP pick")
 keydates <- data.frame(keydate_dates, keydate_events)
 ```
 
@@ -205,8 +205,10 @@ keydates <- data.frame(keydate_dates, keydate_events)
 
 ```{r}
 library(scales)
+library(ggrepel)
 ggplot(VP_data_dates, aes(x = dates, y = n, color = pick)) +
   geom_vline( xintercept = keydates$keydate_dates, linetype = "dashed") +
+
   geom_point( alpha = 0.2) +
   geom_line(aes(y=rollmean(n, 7, na.pad=TRUE, align = "center")), size =1.2) +
   labs(y = "edit count") +
@@ -215,7 +217,27 @@ ggplot(VP_data_dates, aes(x = dates, y = n, color = pick)) +
   theme_minimal() +
   theme(axis.title.x = element_blank())
 ```
+```{r}
 
+ggplot() +
+  geom_vline( xintercept = keydates$keydate_dates, linetype = "dashed") +
+
+  geom_point(data = VP_data_dates, aes(x = dates, y = n, color = pick), alpha = 0.2) +
+  geom_line(aes(x = dates,y=rollmean(n, 7, na.pad=TRUE, align = "center"), color = pick), size =1.2, data = VP_data_dates) +
+  geom_text(mapping = aes(x = keydate_dates,
+                        y = 80,
+                        label = keydate_events,
+                        angle = -90,
+                        hjust = 0,
+                        vjust = 0
+                        ),
+          data = keydates) +
+  labs(y = "edit count") +
+  lims(x = as.Date(c("2020-01-01", "2020-09-01")), y = c(0,100))+
+  scale_x_date(date_breaks = "months" , date_labels = "%b", limits = as.Date(c("2020-01-01", "2020-09-01"))) +
+  theme_minimal() +
+  theme(axis.title.x = element_blank())
+```
 
 Ideas
 add lables to timeline
