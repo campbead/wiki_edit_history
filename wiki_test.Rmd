@@ -268,8 +268,11 @@ ggplot() +
                         hjust = 0,
                         vjust = 1
                         ),
-          data = keydates) +
-  labs(y = "cummulative edit count") +
+          data = keydates,
+          nudge_x = 2,
+          nudge_y = -2,
+          size = 3) +
+  labs(y = "cummulative edit count from 01-Jan-2020") +
   labs(color = "potential VP pick") +
   lims(x = as.Date(c("2020-01-01", "2020-09-01")), y = c(-10,2000))+
   scale_x_date(date_breaks = "months" , date_labels = "%b", limits = as.Date(c("2020-01-01", "2020-09-01"))) +
