@@ -260,7 +260,7 @@ make cumsum plot
 
 ggplot() +
   geom_vline(xintercept = keydates$keydate_dates, linetype = "dashed", color = "darkgrey") +
-  geom_line(aes(x = dates,y=cum_n, color = pick), size =1.2, data = VP_data_dates_cum) +
+  geom_line(aes(x = dates,y=cum_n, color = pick), size =1.2, data = VP_data_dates_cum, alpha = 0.7)  +
   geom_text(mapping = aes(x = keydate_dates,
                         y = -1,
                         label = keydate_key,
@@ -272,12 +272,14 @@ ggplot() +
           nudge_x = 2,
           nudge_y = -2,
           size = 3) +
-  labs(y = "cummulative edit count from 01-Jan-2020") +
+  labs(y = "cummulative edits from 01-Jan-2020") +
   labs(color = "potential VP pick") +
   lims(x = as.Date(c("2020-01-01", "2020-09-01")), y = c(-10,2000))+
   scale_x_date(date_breaks = "months" , date_labels = "%b", limits = as.Date(c("2020-01-01", "2020-09-01"))) +
   theme_minimal() +
   theme(axis.title.x = element_blank())
+
+ggsave("cummulative_edit.png")
 ```
 
 
