@@ -1,0 +1,14 @@
+---
+title: "Explore other wikis"
+author: "Adam J Campbell"
+date: "14/05/2022"
+output: html_document
+---
+
+I want to compile some notes to compare what I want to do to other packages.
+
+packages to explore:
+wikipediatrend
+wikipediaR
+wikiTools
+WikidataQueryServiceR 
