@@ -47,19 +47,26 @@ get_500_recent <- function(title, start_date = "start"){
 
 get_edit_history <- function(title){
 
+  # get first set of data
   first_data <- get_500_recent(title)
 
+  # if the first set of data is less than 500 rows then return that set
   if (nrow(first_data) < 500 ) {
     return(first_data)
   }
 
-  fetched_data <- first_data
-  data_out <- fetched_data
+  # start a loop to get all the data
+  fetched_data <- first_data # current set of fetched data
+  data_out <- fetched_data # all data together
 
   while (nrow(fetched_data) == 500 ){
+    # drop the last row of the data
     data_out <- data_out %>% filter(row_number() <= n()-1)
+    # determine new start date for query
     date_start <- as.character(tail(fetched_data, n=1))
+    # run new query using start date
     fetched_data <- get_500_recent(title, date_start)
+    # combine new data(fetched_data) with data_out
     data_out <- rbind(data_out, fetched_data)
   }
   return(data_out)
