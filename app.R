@@ -7,6 +7,7 @@ library(zoo)
 source("functions.R")
 
 ui <- fluidPage(
+  h1("Wikipedia Edit History Viewer"),
   sidebarLayout(
     sidebarPanel(
       textInput(
