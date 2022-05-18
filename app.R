@@ -14,7 +14,39 @@ ui <- fluidPage(
         "text_input",
         "search"
       ),
-      actionButton("search_action", "Search")
+      actionButton("search_action", "Search"),
+      tabsetPanel(
+        id = "wizard",
+        type = "hidden",
+        tabPanel(
+          "first",
+          "hi"
+        ),
+        tabPanel(
+          "second",
+          "sup",
+          dateInput(
+            inputId = "start_date",
+            label = "start date"
+          )
+        )
+      ),
+      # tabsetPanel(
+      #   id = "wizard",
+      #   type = "hidden",
+      #   tabPanel(
+      #     "initial",
+      #     "first",
+      #     dateInput(
+      #       inputId = "start_date",
+      #       label = "start date"
+      #     )
+      #   ),
+      #   tabPanel(
+      #     "set_2",
+      #     "second"
+      #   ),
+      # ),
     ),
     mainPanel(
       plotOutput("figure")
