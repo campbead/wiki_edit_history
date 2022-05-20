@@ -3,6 +3,7 @@ library(dplyr)
 library(lubridate)
 library(ggplot2)
 library(zoo)
+library(shinyWidgets)
 
 source("functions.R")
 
@@ -30,25 +31,10 @@ ui <- fluidPage(
           )
         )
       ),
-      # tabsetPanel(
-      #   id = "wizard",
-      #   type = "hidden",
-      #   tabPanel(
-      #     "initial",
-      #     "first",
-      #     dateInput(
-      #       inputId = "start_date",
-      #       label = "start date"
-      #     )
-      #   ),
-      #   tabPanel(
-      #     "set_2",
-      #     "second"
-      #   ),
-      # ),
     ),
     mainPanel(
-      plotOutput("figure")
+      addSpinner(plotOutput("figure"), spin = "circle", color = "#E41A1C"),
+
     )
   )
 )
