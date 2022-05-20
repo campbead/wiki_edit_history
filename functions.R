@@ -1,5 +1,6 @@
 library(httr)
 library(jsonlite)
+library(tidyr)
 
 get_500_recent <- function(title, start_date = "start"){
   base_list = list(
@@ -70,4 +71,12 @@ get_edit_history <- function(title){
     data_out <- rbind(data_out, fetched_data)
   }
   return(data_out)
+}
+
+process_edits <- function(edit_data){
+  edit_data %>%
+    mutate(dates =  as_date(timestamp)) %>%
+    count(dates) %>%
+    complete(dates = seq.Date(min(dates), max(dates), by="day")) %>%
+    mutate(n = replace_na(n, 0))
 }

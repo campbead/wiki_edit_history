@@ -33,8 +33,18 @@ ui <- fluidPage(
       ),
     ),
     mainPanel(
-      addSpinner(plotOutput("figure"), spin = "circle", color = "#E41A1C"),
-
+      tabsetPanel(
+        id = "hidden_tab_panel_main",
+        type = "hidden",
+        tabPanel(
+          "first_main"
+        ),
+        tabPanel(
+          "second_main",
+          addSpinner(
+            plotOutput("figure"), spin = "circle", color = "#E41A1C")
+        )
+      )
     )
   )
 )
@@ -44,20 +54,29 @@ ui <- fluidPage(
 server <- function(input, output) {
 
   observeEvent(
-    input$search_action,
-    updateTabsetPanel(inputId = "hidden_tab_panel", selected = "second")
-  )
+    input$search_action, {
+ #     updateTabsetPanel(inputId = "hidden_tab_panel", selected = "second")
+      updateTabsetPanel(inputId = "hidden_tab_panel_main", selected = "second_main")
+    })
+
+  # observeEvent(
+  #   my_data,{
+  #   if (length(my_data > 1)) {updateTabsetPanel(inputId = "hidden_tab_panel", selected = "second")}
+  #
+  # })
 
   my_data <- eventReactive(input$search_action, {
     get_edit_history(input$text_input) %>%
-      mutate(dates =  as_date(timestamp))
+      process_edits()
+      #mutate(dates =  as_date(timestamp))
   })
 
 
+
   output$figure <- renderPlot(
-    ggplot(my_data() %>% count(dates), aes(x = dates, n)) +
+    ggplot(my_data(), aes(x = dates, n)) +
       geom_point(alpha = 0.1, color='darkblue') +
-      geom_line(aes(y=rollmean(n, 14, na.pad=TRUE)), color="purple", size =1.5) +
+      #geom_line(aes(y=rollmean(n, 30, na.pad=TRUE)), color="purple", size =1.5) +
       labs(y = "edit count") +
       theme_minimal() +
       theme(axis.title.x = element_blank())
