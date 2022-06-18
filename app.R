@@ -4,10 +4,12 @@ library(lubridate)
 library(ggplot2)
 library(zoo)
 library(shinyWidgets)
+library(waiter)
 
 source("functions.R")
 
 ui <- fluidPage(
+  autoWaiter(),
   h1("Wikipedia Edit History Viewer"),
   sidebarLayout(
     sidebarPanel(
@@ -37,13 +39,8 @@ ui <- fluidPage(
         id = "hidden_tab_panel_main",
         type = "hidden",
         tabPanel(
-          "first_main"
-        ),
-        tabPanel(
           "second_main",
-          addSpinner(
-            plotOutput("figure"), spin = "circle", color = "#E41A1C"
-          )
+          plotOutput("figure")
         )
       )
     )
@@ -54,21 +51,7 @@ ui <- fluidPage(
 
 server <- function(input, output) {
 
-  observeEvent(
-    input$search_action, {
-      updateTabsetPanel(inputId = "hidden_tab_panel_main", selected = "second_main")
 
-    },
-    once = TRUE,
-    priority = 10)
-
-  observeEvent(
-    length(my_data()) > 1, {
-      updateTabsetPanel(inputId = "hidden_tab_panel", selected = "second")
-    },
-    priority = 2,
-    once = TRUE
-    )
 
 
 
