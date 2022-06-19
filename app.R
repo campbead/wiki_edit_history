@@ -20,20 +20,16 @@ ui <- fluidPage(
 
 server <- function(input, output) {
 
-  my_text <- eventReactive(
-    input$search_action,
-    {
-     Sys.sleep(3)
-     "LONG CALCULATION"
-    })
+  observeEvent(input$search_action, {
+    updateTabsetPanel(inputId = "hidden_tab_panel", selected = "second")
+  })
 
-  output$text <- renderText(
-    {
-      my_text()
-    }
-  )
+  my_text <- eventReactive(input$search_action, {
+    Sys.sleep(3)
+    "LONG CALCULATION"
+  })
 
-
+  output$text <- renderText({my_text()})
 }
 
 shinyApp(ui, server)
