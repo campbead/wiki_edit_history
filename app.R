@@ -1,12 +1,5 @@
 library(shiny)
-library(dplyr)
-library(lubridate)
-library(ggplot2)
-library(zoo)
-library(shinyWidgets)
 library(waiter)
-
-source("functions.R")
 
 ui <- fluidPage(
   autoWaiter(),
@@ -14,16 +7,18 @@ ui <- fluidPage(
   textOutput("text")
 )
 
-
-
 server <- function(input, output) {
 
+  my_text <- eventReactive(
+    input$search_action,
+    {
+     Sys.sleep(3)
+     "LONG CALCULATION"
+    })
 
   output$text <- renderText(
     {
-      input$search_action
-      Sys.sleep(3)
-      "LONG CALCULATION"
+      my_text()
     }
   )
 
