@@ -4,6 +4,17 @@ library(waiter)
 ui <- fluidPage(
   autoWaiter(),
   actionButton("search_action", "Run"),
+  tabsetPanel(
+    id = "hidden_tab_panel",
+    type = "hidden",
+    tabPanel(
+      "first"
+    ),
+    tabPanel(
+      "second",
+    textInput("more_input", "More input")
+    )
+  ),
   textOutput("text")
 )
 
